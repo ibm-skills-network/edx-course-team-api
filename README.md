@@ -33,3 +33,7 @@ Sample response
     "message": "User is added to course-v1:IBMDeveloperSkillsNetwork+CB0103EN+v1333."
 }
 ```
+
+## Implementation
+
+The handler is taken from [edx/edx-platform/cms/djangoapps/contentstore/views/user.py](https://github.com/edx/edx-platform/blob/d9a072af26ddb87295aa450bea384bc643ad0e50/cms/djangoapps/contentstore/views/user.py#L102-L198).
