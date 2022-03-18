@@ -34,6 +34,31 @@ Sample response
 }
 ```
 
+### Remove course team member
+
+`DELETE /course-team/<course_key>/modify_access`
+
+The JSON body requires one paramter.
+
+-   `email`: An existed user.
+
+Sample request
+
+```json
+{
+    "email": "instructor@example.com",
+}
+```
+
+Sample response
+
+```json
+{
+    "message": "User is removed from course-v1:IBMDeveloperSkillsNetwork+CB0103EN+v1333."
+}
+```
+
+
 ## Implementation
 
 The handler is taken from [edx/edx-platform/cms/djangoapps/contentstore/views/user.py](https://github.com/edx/edx-platform/blob/d9a072af26ddb87295aa450bea384bc643ad0e50/cms/djangoapps/contentstore/views/user.py#L102-L198).

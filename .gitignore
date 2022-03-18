@@ -59,3 +59,5 @@ docs/edx_course_team_api.*.rst
 # Private requirements
 requirements/private.in
 requirements/private.txt
+
+.vscode
