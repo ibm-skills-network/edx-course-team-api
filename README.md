@@ -38,17 +38,15 @@ Sample response
 
 `DELETE /course-team/<course_key>/modify_access`
 
-The JSON body requires two parameters.
+The JSON body requires one paramter.
 
 -   `email`: An existed user.
--   `role`: One of `staff`, `instructor`.
 
 Sample request
 
 ```json
 {
     "email": "instructor@example.com",
-    "role": "instructor"
 }
 ```
 
@@ -60,12 +58,6 @@ Sample response
 }
 ```
 
-If the user doesn't have the role that was specified in the params
-```json
-{
-    "error": "User does not have role 'instructor' in course 'course-v1:IBMDeveloperSkillsNetwork+CB0103EN+v1333'"
-}
-```
 
 ## Implementation
 

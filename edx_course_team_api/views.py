@@ -78,11 +78,6 @@ class CourseView(APIView):
         email = request.data.get("email", None)
         validate_param_exist(email, "email")
 
-        role = request.data.get("role", None)
-        validate_param_exist(role, "role")
-
-        validate_param_value(role, ROLE_OPTIONS)
-
         try:
             user = User.objects.get(email=email)
         except Exception:  # pylint: disable=broad-except
@@ -91,18 +86,14 @@ class CourseView(APIView):
             }
             return Response(msg, 404)
 
-        role_type = ROLE_TYPE_MAPPINGS.get(role)(course_key)
-        if role_type.has_user(request.user):
-            msg = {
-                "error": "User does not have role '{role}' in course '{course_key}'".format(role=role, course_key=course_key)
-            }
-            return Response(msg, 404)
         auth.get_user_permissions(request.user, course_key)
 
-        auth.remove_users(request.user, role_type, user)
+        auth.remove_users(request.user, CourseStaffRole(course_key), user)
+        auth.remove_users(request.user, CourseInstructorRole(course_key), user)
+
         CourseEnrollment.unenroll(user, course_key)
 
-        msg = "'{email}' is removed '{role}' from '{course_key}'".format(email=email, role=role, course_key=course_key)
+        msg = "'{email}''s permissions are revoked from '{course_key}'".format(email=email, course_key=course_key)
         log.info(msg)
 
         return Response({'message': "User is removed from {}.".format(course_key)})
