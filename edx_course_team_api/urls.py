@@ -2,12 +2,12 @@
 URLs for edx_course_team_api.
 """
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import CourseView
 
 urlpatterns = [
-    url(r'^{}/modify_access'.format(settings.COURSE_KEY_PATTERN), CourseView.as_view(), name='course'),
+    re_path(fr'^{settings.COURSE_KEY_PATTERN}/modify_access', CourseView.as_view(), name='course'),
 ]
 
 # Since urls.py is executed once, create service user here for server to server auth
