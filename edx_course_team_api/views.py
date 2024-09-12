@@ -97,3 +97,7 @@ class CourseView(APIView):
         log.info(msg)
 
         return Response({'message': "User is removed from {}.".format(course_key)})
+
+    def new_fn():
+        pass
+
