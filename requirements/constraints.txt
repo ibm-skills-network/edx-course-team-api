@@ -12,5 +12,7 @@
 # against django 5.2.7 (issue #11), including the SQL injection in
 # QuerySet.filter()/exclude()/get() and Q() (CVE-2025-64459, CVSS 9.1) and the
 # GenericInlineModelAdmin permission bypass (CVE-2026-4277, CVSS 9.8).
-# 5.2.x is the current LTS line; bump as new security releases land.
-Django>=5.2.15
+# 5.2.x is the current LTS line. The upper bound keeps us on the 5.x series
+# and prevents an unintended major-version jump to 6.0; bump as new security
+# releases land.
+Django>=5.2.15,<6.0.0

@@ -2,5 +2,5 @@
 -c constraints.txt
 
 
-Django>=5.2.15            # Web application framework
+Django>=5.2.15,<6.0.0     # Web application framework
 djangorestframework>=3.9
