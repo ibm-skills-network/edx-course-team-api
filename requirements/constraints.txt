@@ -7,3 +7,10 @@
 # link to other information that will help people in the future to remove the
 # pin when possible.  Writing an issue against the offending project and
 # linking to it here is good.
+
+# Django 5.2.15 is the minimum that resolves the 22 CVEs reported by Mend
+# against django 5.2.7 (issue #11), including the SQL injection in
+# QuerySet.filter()/exclude()/get() and Q() (CVE-2025-64459, CVSS 9.1) and the
+# GenericInlineModelAdmin permission bypass (CVE-2026-4277, CVSS 9.8).
+# 5.2.x is the current LTS line; bump as new security releases land.
+Django>=5.2.15
