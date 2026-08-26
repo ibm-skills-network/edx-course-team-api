@@ -1,1 +1,3 @@
-# it's not used v1
+# Pinned dependencies for scanning and reproducible installs.
+# Generated from base.in via pip-compile; see requirements/base.txt.
+-r base.txt
