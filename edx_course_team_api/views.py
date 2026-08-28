@@ -16,6 +16,8 @@ from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRol
 from opaque_keys.edx.keys import CourseKey
 from cms.djangoapps.contentstore.views.user import _course_team_user
 
+from .permissions import IsServiceAccount
+
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ def validate_param_value(param, options):
 class CourseView(APIView):
 
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsServiceAccount]
 
     def post(self, request, course_key_string):
         course_key = CourseKey.from_string(course_key_string)
@@ -54,6 +56,8 @@ class CourseView(APIView):
 
         validate_param_value(role, ROLE_OPTIONS)
 
+        enroll = request.data.get("enroll", True)
+
         try:
             user = User.objects.get(email=email)
         except Exception:  # pylint: disable=broad-except
@@ -64,7 +68,8 @@ class CourseView(APIView):
 
         role_type = ROLE_TYPE_MAPPINGS.get(role)(course_key)
         auth.add_users(request.user, role_type, user)
-        CourseEnrollment.enroll(user, course_key)
+        if enroll:
+            CourseEnrollment.enroll(user, course_key)
 
         msg = "'{email}' is granted '{role}' to '{course_key}'".format(email=email, role=role, course_key=course_key)
         log.info(msg)
@@ -86,12 +91,15 @@ class CourseView(APIView):
             }
             return Response(msg, 404)
 
+        enroll = request.data.get("enroll", True)
+
         auth.get_user_permissions(request.user, course_key)
 
         auth.remove_users(request.user, CourseStaffRole(course_key), user)
         auth.remove_users(request.user, CourseInstructorRole(course_key), user)
 
-        CourseEnrollment.unenroll(user, course_key)
+        if enroll:
+            CourseEnrollment.unenroll(user, course_key)
 
         msg = "'{email}''s permissions are revoked from '{course_key}'".format(email=email, course_key=course_key)
         log.info(msg)
