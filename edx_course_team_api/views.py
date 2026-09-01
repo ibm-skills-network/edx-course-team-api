@@ -16,6 +16,8 @@ from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRol
 from opaque_keys.edx.keys import CourseKey
 from cms.djangoapps.contentstore.views.user import _course_team_user
 
+from .permissions import IsServiceAccount
+
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ def validate_param_value(param, options):
 class CourseView(APIView):
 
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsServiceAccount]
 
     def post(self, request, course_key_string):
         course_key = CourseKey.from_string(course_key_string)
