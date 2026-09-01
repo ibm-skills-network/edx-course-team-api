@@ -17,6 +17,11 @@ The JSON body requires two parameters.
 -   `email`: An existed user.
 -   `role`: One of `staff`, `instructor`.
 
+And accepts one optional parameter.
+
+-   `enroll`: Defaults to `true`. Pass `false` to grant the role without also
+    enrolling the user in the course.
+
 Sample request
 
 ```json

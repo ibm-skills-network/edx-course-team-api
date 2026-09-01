@@ -185,6 +185,26 @@ class TestGrantCourseTeamRole(CourseTeamTestMixin, TestCase):
         self.assertEqual(enrolled, self.target)
         self.assertEqual(str(course_key), COURSE_KEY_STRING)
 
+    def test_grant_skips_enrollment_when_enroll_is_json_false(self):
+        res = self.request(
+            credentials=SERVICE_CREDENTIALS,
+            body={'email': TARGET_EMAIL, 'role': 'staff', 'enroll': False},
+        )
+        self.assertEqual(res.status_code, 200)
+        self.auth.add_users.assert_called_once()
+        self.assertFalse(self.enrollment.enroll.called)
+
+    def test_grant_skips_enrollment_when_enroll_is_form_encoded_false(self):
+        """A form-encoded body delivers the string "false", which is truthy."""
+        res = self.request(
+            credentials=SERVICE_CREDENTIALS,
+            body={'email': TARGET_EMAIL, 'role': 'staff', 'enroll': 'false'},
+            form_encoded=True,
+        )
+        self.assertEqual(res.status_code, 200)
+        self.auth.add_users.assert_called_once()
+        self.assertFalse(self.enrollment.enroll.called)
+
     def test_400_unknown_role(self):
         res = self.request(
             credentials=SERVICE_CREDENTIALS,

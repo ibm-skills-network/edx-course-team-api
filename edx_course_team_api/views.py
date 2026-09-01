@@ -56,6 +56,10 @@ class CourseView(APIView):
 
         validate_param_value(role, ROLE_OPTIONS)
 
+        # Studio leaves DRF's FormParser enabled, so a form-encoded 'enroll=false'
+        # arrives as the string "false" -- truthy until it is compared as text.
+        enroll = str(request.data.get("enroll", "true")).lower() == "true"
+
         try:
             user = User.objects.get(email=email)
         except Exception:  # pylint: disable=broad-except
@@ -66,7 +70,8 @@ class CourseView(APIView):
 
         role_type = ROLE_TYPE_MAPPINGS.get(role)(course_key)
         auth.add_users(request.user, role_type, user)
-        CourseEnrollment.enroll(user, course_key)
+        if enroll:
+            CourseEnrollment.enroll(user, course_key)
 
         msg = "'{email}' is granted '{role}' to '{course_key}'".format(email=email, role=role, course_key=course_key)
         log.info(msg)
