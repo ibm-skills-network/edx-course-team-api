@@ -14,7 +14,6 @@ from common.djangoapps.student import auth
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from opaque_keys.edx.keys import CourseKey
-from cms.djangoapps.contentstore.views.user import _course_team_user
 
 from .permissions import IsServiceAccount
 
