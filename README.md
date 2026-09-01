@@ -17,6 +17,12 @@ The JSON body requires two parameters.
 -   `email`: An existed user.
 -   `role`: One of `staff`, `instructor`.
 
+And accepts one optional parameter.
+
+-   `enroll`: Enrolls unless the value is a case-insensitive `"true"`, so anything
+    else - `false`, `0`, `null`, `""` - skips enrollment. Omit it to enroll, which
+    is the historical behaviour.
+
 Sample request
 
 ```json
