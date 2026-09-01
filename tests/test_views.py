@@ -3,10 +3,16 @@
 Tests for the `edx_course_team_api` views module.
 
 These exercise the real authentication (HTTP Basic Auth) and authorization
-(service-account only) behaviour of the modify_access endpoint, including a
-regression test proving that neither an ordinary learner nor an unrelated
-superuser can hand themselves a course-team role. Only the configured
-``AUTH_USERNAME`` service account may call this endpoint.
+(service-account only) behaviour of the modify_access endpoint. Only the
+configured ``AUTH_USERNAME`` service account may call it.
+
+On what the permission class actually closes: upstream ``auth.add_users`` runs
+``_check_caller_authority``, so a plain learner was never able to grant itself a
+role here - it got PermissionDenied from the platform. The pre-fix exposure was
+any Django ``is_staff`` account on any course, any course instructor on their own
+course, and DELETE against your own email, which upstream permits and which this
+fork then followed with ``CourseEnrollment.unenroll``. The tests below drive the
+view with ``auth`` mocked, so they pin the permission class, not the platform gate.
 """
 
 import base64
@@ -114,7 +120,7 @@ class CourseTeamTestMixin(object):
         self.assert_no_access_change()
 
     def test_forbidden_for_learner(self):
-        """Core regression: an authenticated non-staff learner is rejected."""
+        """An authenticated non-staff learner never reaches the view."""
         res = self.request(credentials=(LEARNER_USERNAME, LEARNER_PASSWORD))
         self.assertEqual(res.status_code, 403)
         self.assert_no_access_change()
