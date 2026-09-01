@@ -93,8 +93,6 @@ class CourseView(APIView):
         auth.remove_users(request.user, CourseStaffRole(course_key), user)
         auth.remove_users(request.user, CourseInstructorRole(course_key), user)
 
-        CourseEnrollment.unenroll(user, course_key)
-
         msg = "'{email}''s permissions are revoked from '{course_key}'".format(email=email, course_key=course_key)
         log.info(msg)
 

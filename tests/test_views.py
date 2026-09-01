@@ -214,3 +214,16 @@ class TestRevokeCourseTeamRole(CourseTeamTestMixin, TestCase):
         self.assertEqual(res.status_code, 200)
         revoked_from = [call[0][2] for call in self.auth.remove_users.call_args_list]
         self.assertEqual(revoked_from, [self.target, self.target])
+
+    def test_revoke_leaves_enrollment_alone(self):
+        """Revoking a role must not unenroll: upstream's course-team handler never does.
+
+        Unenrolling here costs a genuinely enrolled learner their course access,
+        progress and certificate eligibility -- from a call that only asked to
+        take a role away. Callers wanting an unenroll have the instructor
+        enrollment API for that.
+        """
+        res = self.request(credentials=SERVICE_CREDENTIALS)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(self.auth.remove_users.called)
+        self.assertFalse(self.enrollment.unenroll.called)
