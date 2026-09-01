@@ -19,8 +19,9 @@ The JSON body requires two parameters.
 
 And accepts one optional parameter.
 
--   `enroll`: Defaults to `true`. Pass `false` to grant the role without also
-    enrolling the user in the course.
+-   `enroll`: Enrolls unless the value is a case-insensitive `"true"`, so anything
+    else - `false`, `0`, `null`, `""` - skips enrollment. Omit it to enroll, which
+    is the historical behaviour.
 
 Sample request
 
