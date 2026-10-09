@@ -14,7 +14,8 @@ from common.djangoapps.student import auth
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from opaque_keys.edx.keys import CourseKey
-from cms.djangoapps.contentstore.views.user import _course_team_user
+
+from .permissions import IsServiceAccount
 
 
 log = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ def validate_param_value(param, options):
 class CourseView(APIView):
 
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsServiceAccount]
 
     def post(self, request, course_key_string):
         course_key = CourseKey.from_string(course_key_string)
@@ -54,6 +55,10 @@ class CourseView(APIView):
 
         validate_param_value(role, ROLE_OPTIONS)
 
+        # Studio leaves DRF's FormParser enabled, so a form-encoded 'enroll=false'
+        # arrives as the string "false" -- truthy until it is compared as text.
+        enroll = str(request.data.get("enroll", "true")).lower() == "true"
+
         try:
             user = User.objects.get(email=email)
         except Exception:  # pylint: disable=broad-except
@@ -64,7 +69,8 @@ class CourseView(APIView):
 
         role_type = ROLE_TYPE_MAPPINGS.get(role)(course_key)
         auth.add_users(request.user, role_type, user)
-        CourseEnrollment.enroll(user, course_key)
+        if enroll:
+            CourseEnrollment.enroll(user, course_key)
 
         msg = "'{email}' is granted '{role}' to '{course_key}'".format(email=email, role=role, course_key=course_key)
         log.info(msg)
@@ -90,8 +96,6 @@ class CourseView(APIView):
 
         auth.remove_users(request.user, CourseStaffRole(course_key), user)
         auth.remove_users(request.user, CourseInstructorRole(course_key), user)
-
-        CourseEnrollment.unenroll(user, course_key)
 
         msg = "'{email}''s permissions are revoked from '{course_key}'".format(email=email, course_key=course_key)
         log.info(msg)
