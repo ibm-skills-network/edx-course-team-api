@@ -19,7 +19,7 @@ The JSON body requires two parameters.
 
 And accepts one optional parameter.
 
--   `enroll`: Enrolls unless the value is a case-insensitive `"true"`, so anything
+-   `enroll`: Enrolls only when the value is a case-insensitive `"true"`; anything
     else - `false`, `0`, `null`, `""` - skips enrollment. Omit it to enroll, which
     is the historical behaviour.
 
