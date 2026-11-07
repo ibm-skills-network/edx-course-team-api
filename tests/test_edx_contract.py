@@ -193,7 +193,18 @@ def _check(stub, real, where):
     elif isinstance(stub, ast.ClassDef):
         assert isinstance(real, ast.ClassDef), f'{where} is not a class in edx-platform'
         real_defs = _defs(real.body)
-        for name, member in _defs(stub.body).items():
+        stub_defs = _defs(stub.body)
+        # A Django model has no __init__ of its own. It takes its fields as keyword
+        # arguments. So when the real class defines no __init__, every parameter of the
+        # stand-in's __init__ has to be a name the real class body assigns. Without this
+        # a renamed field passes here, and the real constructor raises TypeError.
+        init = stub_defs.get('__init__')
+        if init is not None and '__init__' not in real_defs:
+            fields = _bound_names(real.body)
+            for param, kind, _ in _params(init):
+                if kind in ('positional', 'keyword-only'):
+                    assert param in fields, f'{where} has no field {param} in edx-platform'
+        for name, member in stub_defs.items():
             # A model's DoesNotExist comes from Django, not from the class body.
             if name == 'DoesNotExist' or not _public(name):
                 continue
