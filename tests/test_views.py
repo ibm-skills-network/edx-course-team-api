@@ -13,6 +13,7 @@ import secrets
 from unittest import mock
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
@@ -20,8 +21,7 @@ from django.urls import reverse
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from edx_course_team_api import views
 
-# Must match AUTH_USERNAME in test_settings.py.
-SERVICE_USERNAME = 'sn-service'
+SERVICE_USERNAME = settings.AUTH_USERNAME
 SERVICE_EMAIL = 'service@place.com'
 SERVICE_PASSWORD = secrets.token_hex(8)
 SERVICE_CREDENTIALS = (SERVICE_USERNAME, SERVICE_PASSWORD)
@@ -138,6 +138,13 @@ class CourseTeamTestMixin(object):
 
     def test_400_missing_email(self):
         res = self.request(credentials=SERVICE_CREDENTIALS, body={'role': 'staff'})
+        self.assertEqual(res.status_code, 400)
+        self.assert_no_access_change()
+
+    def test_400_invalid_course_key(self):
+        # foo+bar+baz matches the URL pattern, but opaque_keys rejects it.
+        self.url = reverse('course', kwargs={'course_key_string': 'foo+bar+baz'})
+        res = self.request(credentials=SERVICE_CREDENTIALS)
         self.assertEqual(res.status_code, 400)
         self.assert_no_access_change()
 

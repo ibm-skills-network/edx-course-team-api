@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from common.djangoapps.student import auth
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
+from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
 from .permissions import IsServiceAccount
@@ -34,13 +35,23 @@ def validate_param_value(param, options):
         msg = { "error": "Parameter 'role' has to be one of '{}'".format(options) }
         log.info(msg)
         raise ParseError(msg)
+
+def parse_course_key(course_key_string):
+    try:
+        return CourseKey.from_string(course_key_string)
+    except InvalidKeyError:
+        msg = {"error": "Invalid course key '{}'.".format(course_key_string)}
+        log.info(msg)
+        raise ParseError(msg)
+
+
 class CourseView(APIView):
 
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsServiceAccount]
 
     def post(self, request, course_key_string):
-        course_key = CourseKey.from_string(course_key_string)
+        course_key = parse_course_key(course_key_string)
 
         email = request.data.get("email", None)
         validate_param_exist(email, "email")
@@ -69,7 +80,7 @@ class CourseView(APIView):
 
 
     def delete(self, request, course_key_string):
-        course_key = CourseKey.from_string(course_key_string)
+        course_key = parse_course_key(course_key_string)
 
         email = request.data.get("email", None)
         validate_param_exist(email, "email")
