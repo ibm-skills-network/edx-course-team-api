@@ -2,10 +2,10 @@
 -c constraints.txt
 
 # setup.py turns this file into install_requires. The Open edX image installs
-# edx-platform's pinned requirements first and this package after them, so a floor above
+# edx-platform's pinned requirements first and this package after them. A floor above
 # the platform's own pin makes pip upgrade that package inside the image. Redwood pins
-# Django 4.2 and djangorestframework 3.14; Verawood pins Django 5.2.13 and
-# djangorestframework 3.17.1. These ranges build on both. Security fixes for these
-# packages reach the portals through the platform's pins, not through this file.
+# Django 4.2 and djangorestframework 3.14. Verawood pins Django 5.2.13 and
+# djangorestframework 3.17.1. These ranges build on both. A security fix for one of
+# these packages has to land in edx-platform's pins.
 Django>=4.2,<6.0          # Web application framework
 djangorestframework>=3.14,<4.0

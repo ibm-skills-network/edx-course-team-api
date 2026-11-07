@@ -40,8 +40,8 @@ ROOT_URLCONF = 'edx_course_team_api.urls'
 
 SECRET_KEY = 'insecure-secret-key'
 
-# Every test authenticates over HTTP Basic, which rehashes the password on each
-# request; the default PBKDF2 hasher turns the suite into a two-minute run.
+# Every test authenticates over HTTP Basic, and Django hashes the password on each
+# request. With the default PBKDF2 hasher the suite takes two minutes.
 PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
 # Username of the dedicated service account allowed to call the course-team
@@ -49,6 +49,6 @@ PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 # is set by settings.common.plugin_settings from the environment.
 AUTH_USERNAME = 'sn-service'
 
-# Studio supplies this from openedx.core.constants; urls.py builds the endpoint
+# Studio supplies this from openedx.core.constants. urls.py builds the endpoint
 # pattern out of it.
 COURSE_KEY_PATTERN = r'(?P<course_key_string>[^/+]+(/|\+)[^/+]+(/|\+)[^/?]+)'

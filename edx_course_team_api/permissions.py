@@ -10,13 +10,12 @@ class IsServiceAccount(BasePermission):
     Allow access only to the dedicated course-team-api service account.
 
     The caller must be an authenticated staff user whose username matches the
-    configured ``AUTH_USERNAME`` setting. This restricts the privilege-granting
-    endpoints to a single known integration account rather than to any
-    authenticated (or even any staff/superuser) user.
+    configured ``AUTH_USERNAME`` setting. Other staff users and superusers are
+    refused too. Only the one integration account can grant or revoke roles.
 
     Fails closed when ``AUTH_USERNAME`` is unset or empty. ``settings.common``
-    already refuses to boot Studio without it, so that branch is defence in
-    depth rather than a state this plugin can actually reach.
+    already refuses to boot Studio without it. So that branch is defence in
+    depth. This plugin cannot reach that state today.
     """
 
     def has_permission(self, request, view):
