@@ -1,0 +1,25 @@
+# Versions the Redwood image runs, copied from edx-platform open-release/redwood.2
+# requirements/edx/base.txt and testing.txt. There is one file per release the tests
+# run against (RELEASE in the Makefile).
+#
+# Used with `pip install -c`, so a line here only pins a package; it does not install it.
+# The file name does not start with "requirements", so Mend does not scan it. The pins
+# match edx-platform's own, so a security fix has to land there, not here.
+asgiref==3.8.1
+coverage==7.5.1
+django==4.2.15
+djangorestframework==3.14.0
+dnspython==2.6.1
+edx-opaque-keys==2.9.0
+iniconfig==2.0.0
+packaging==24.0
+pbr==6.0.0
+pluggy==1.5.0
+pymongo==3.13.0
+pytest==8.2.0
+pytest-cov==5.0.0
+pytest-django==4.8.0
+pytz==2024.1
+sqlparse==0.5.0
+stevedore==5.2.0
+typing-extensions==4.11.0

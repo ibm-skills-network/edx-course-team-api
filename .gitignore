@@ -61,3 +61,7 @@ requirements/private.in
 requirements/private.txt
 
 .vscode
+
+# make test RELEASE=...
+.venv-*/
+.edx-sources/

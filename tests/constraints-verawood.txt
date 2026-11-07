@@ -1,0 +1,24 @@
+# Versions the Verawood image runs, copied from edx-platform release/verawood.2
+# requirements/edx/base.txt and testing.txt. There is one file per release the tests
+# run against (RELEASE in the Makefile).
+#
+# Used with `pip install -c`, so a line here only pins a package; it does not install it.
+# The file name does not start with "requirements", so Mend does not scan it. The pins
+# match edx-platform's own, so a security fix has to land there, not here.
+asgiref==3.11.1
+coverage==7.13.5
+django==5.2.13
+djangorestframework==3.17.1
+dnspython==2.8.0
+edx-opaque-keys==4.0.0
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+pymongo==4.4.0
+pytest==8.2.0
+pytest-cov==7.1.0
+pytest-django==4.12.0
+pytz==2026.1.post1
+sqlparse==0.5.5
+stevedore==5.7.0
+typing-extensions==4.15.0
