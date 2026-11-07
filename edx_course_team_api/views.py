@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 
 # edx imports
@@ -13,10 +12,10 @@ from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
 from opaque_keys.edx.keys import CourseKey
 
+from .permissions import IsServiceAccount
+
 
 log = logging.getLogger(__name__)
-
-USERNAME = 'admin' # the user who will be associated with new courses
 
 ROLE_TYPE_MAPPINGS = {
     "staff": CourseStaffRole,
@@ -38,7 +37,7 @@ def validate_param_value(param, options):
 class CourseView(APIView):
 
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsServiceAccount]
 
     def post(self, request, course_key_string):
         course_key = CourseKey.from_string(course_key_string)
@@ -82,8 +81,6 @@ class CourseView(APIView):
                 "error": "Could not find user by email address '{email}'".format(email=email)
             }
             return Response(msg, 404)
-
-        auth.get_user_permissions(request.user, course_key)
 
         auth.remove_users(request.user, CourseStaffRole(course_key), user)
         auth.remove_users(request.user, CourseInstructorRole(course_key), user)
